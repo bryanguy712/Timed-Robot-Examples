@@ -4,19 +4,35 @@
 
 package frc.robot;
 
-import edu.wpi.first.wpilibj.TimedRobot;
+import com.playingwithfusion.CANVenom;
 
-/**
- * The methods in this class are called automatically corresponding to each mode, as described in
- * the TimedRobot documentation. If you change the name of this class or the package after creating
- * this project, you must also update the Main.java file in the project.
- */
+import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.drive.MecanumDrive;
+
 public class Robot extends TimedRobot {
-  /**
-   * This function is run when the robot is first started up and should be used for any
-   * initialization code.
-   */
-  public Robot() {}
+  private CANVenom frontLeftDrive;
+  private CANVenom rearLeftDrive;
+  private CANVenom frontRightDrive;
+  private CANVenom rearRightDrive;
+
+  private XboxController controller;
+
+  private MecanumDrive m_robotDrive;
+
+  public Robot() {
+    frontLeftDrive = new CANVenom(3);
+    rearLeftDrive = new CANVenom(4);
+    frontRightDrive = new CANVenom(1);
+    rearRightDrive = new CANVenom(5);
+
+    frontRightDrive.setInverted(true);
+    rearRightDrive.setInverted(true);
+
+    controller = new XboxController(0);
+
+    m_robotDrive = new MecanumDrive(frontLeftDrive::set, rearLeftDrive::set, frontRightDrive::set, rearRightDrive::set);
+  }
 
   @Override
   public void robotPeriodic() {}
@@ -31,7 +47,9 @@ public class Robot extends TimedRobot {
   public void teleopInit() {}
 
   @Override
-  public void teleopPeriodic() {}
+  public void teleopPeriodic() {
+    m_robotDrive.driveCartesian(-controller.getLeftY(), -controller.getLeftX(), -controller.getRightX());
+  }
 
   @Override
   public void disabledInit() {}
